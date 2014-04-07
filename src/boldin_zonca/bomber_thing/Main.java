@@ -1,4 +1,4 @@
-package Boldin_Zonca.BomberThing;
+package boldin_zonca.bomber_thing;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.material.Material;

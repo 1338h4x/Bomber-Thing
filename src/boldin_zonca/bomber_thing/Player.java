@@ -1,4 +1,4 @@
-package Boldin_Zonca.BomberThing;
+package boldin_zonca.bomber_thing;
 
 import com.jme3.scene.Node;
 import com.jme3.material.Material;
@@ -8,18 +8,21 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.shape.Cylinder;
 import com.jme3.scene.shape.Sphere;
-import com.jme3.input.controls.ActionListener;
-
 
 /**
  *
  * @author David Boldin & Dan Zonca
  */
-public class Player extends Node implements ActionListener
+public class Player extends Node
 {
+    private boolean hasExtraHit;
+    private int maxBombs;
+    private int bombCount;
+    private int bombRadius;    
+    
     private final float headRadius = 5;
     private final float bodyRadius = 4.5f;
-    float height = 6;
+    float height = 8;
     Geometry geomHead;
     Geometry geomBody;
     
@@ -43,10 +46,6 @@ public class Player extends Node implements ActionListener
         geomBody.setMaterial(mat);
         this.attachChild(geomBody);
         this.attachChild(geomHead);
-    }
-
-    public void onAction(String string, boolean bln, float f)
-    {
-        
+        this.setLocalTranslation(pos);
     }
 }

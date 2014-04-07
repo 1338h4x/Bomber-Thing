@@ -1,4 +1,4 @@
-package Boldin_Zonca.BomberThing;
+package boldin_zonca.bomber_thing;
 
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
@@ -28,7 +28,6 @@ public class Game extends AbstractAppState
     private AppStateManager stateManager;
     private BulletAppState bullet;
     
-    
     private Material testMat;
     private Player testPlayer;
         
@@ -46,9 +45,10 @@ public class Game extends AbstractAppState
         initLights();
         initCam();
         
-        testPlayer = new Player("One", testMat, new Vector3f(0, 0, 0), Vector3f.UNIT_X);
+        testPlayer = new Player("One", testMat, new Vector3f(-60, 0, -60), Vector3f.ZERO);
         RigidBodyControl physPlayer = new RigidBodyControl(30);
         testPlayer.addControl(physPlayer);
+        physPlayer.setKinematic(true);
         app.getRootNode().attachChild(testPlayer);
         bullet.getPhysicsSpace().add(physPlayer);
         
@@ -56,7 +56,7 @@ public class Game extends AbstractAppState
     
     private void initTestLevel()
     {
-        Node testLevel = (Node) app.getAssetManager().loadModel("/Models/testLevel/testLevel.mesh.j3o");        
+        Node testLevel = (Node) app.getAssetManager().loadModel("/Models/Level01/Level01.mesh.j3o");        
         RigidBodyControl physTestLevel = new RigidBodyControl(0);
         testLevel.addControl(physTestLevel);
         app.getRootNode().attachChild(testLevel);
@@ -69,14 +69,14 @@ public class Game extends AbstractAppState
         if (Main.DEBUG)
         {
             flyCam.setEnabled(true);
-            flyCam.setMoveSpeed(20f);
+            flyCam.setMoveSpeed(30f);
         }
         else
         {
             flyCam.setEnabled(false);
         }
         
-        app.getCamera().setLocation(new Vector3f(0, 160f, 100f));
+        app.getCamera().setLocation(new Vector3f(0, 160f, 140f));
         app.getCamera().lookAt(new Vector3f(0, 0, 10), Vector3f.UNIT_Y);
     }
     
@@ -94,13 +94,13 @@ public class Game extends AbstractAppState
          * A white ambient light source.
          */
         AmbientLight ambient = new AmbientLight();
-        ambient.setColor(ColorRGBA.White);
+        ambient.setColor(ColorRGBA.White.mult(0.0f));
         app.getRootNode().addLight(ambient);
         /**
          * A white, directional light source
          */
         DirectionalLight sun = new DirectionalLight();
-        sun.setDirection((new Vector3f(-0.3f, -0.4f, -0.5f)).normalizeLocal());
+        sun.setDirection((new Vector3f(-2f, -5f, -2f).normalizeLocal()));
         sun.setColor(ColorRGBA.White);
         app.getRootNode().addLight(sun);
 
@@ -117,7 +117,7 @@ public class Game extends AbstractAppState
         if(show)
         {            
             int lineWidth = 5;
-            float axisLength = 130;
+            float axisLength = 150;
             Geometry geom;
             Arrow arrow;
             Material mat;
@@ -135,7 +135,7 @@ public class Game extends AbstractAppState
             rootNode.attachChild(geom);
             
             //Axis            
-            arrow = new Arrow(new Vector3f(axisLength, 0, 0));
+            arrow = new Arrow(new Vector3f(axisLength/2, 0, 0));
             arrow.setLineWidth(lineWidth);
             mat = new Material(assMan, "Common/MatDefs/Misc/Unshaded.j3md");
             mat.setColor("Color", ColorRGBA.Blue);
@@ -143,7 +143,7 @@ public class Game extends AbstractAppState
             geom.setMaterial(mat);
             rootNode.attachChild(geom);
             
-            arrow = new Arrow(new Vector3f(0, axisLength, 0));
+            arrow = new Arrow(new Vector3f(0, axisLength/2, 0));
             arrow.setLineWidth(lineWidth);
             mat = new Material(assMan, "Common/MatDefs/Misc/Unshaded.j3md");
             mat.setColor("Color", ColorRGBA.Red);
@@ -151,7 +151,7 @@ public class Game extends AbstractAppState
             geom.setMaterial(mat);
             rootNode.attachChild(geom);
             
-            arrow = new Arrow(new Vector3f(0, 0, axisLength));
+            arrow = new Arrow(new Vector3f(0, 0, axisLength/2));
             arrow.setLineWidth(lineWidth);
             mat = new Material(assMan, "Common/MatDefs/Misc/Unshaded.j3md");
             mat.setColor("Color", ColorRGBA.Green);

@@ -1,4 +1,4 @@
-package Boldin_Zonca.BomberThing;
+package boldin_zonca.bomber_thing;
 
 import com.jme3.app.state.AbstractAppState;
 
@@ -6,7 +6,7 @@ import com.jme3.app.state.AbstractAppState;
  *
  * @author David Boldin & Dan Zonca
  */
-public class TitleScreen extends AbstractAppState
+public class ResultScreen extends AbstractAppState
 {
     
 }
