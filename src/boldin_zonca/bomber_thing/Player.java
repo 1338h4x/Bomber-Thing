@@ -29,6 +29,7 @@ public class Player extends Node
     public Player(String name, Material mat, Vector3f pos, Vector3f dir)
     {
         this.name = name;
+        this.setLocalTranslation(pos);
         
         Cylinder body = new Cylinder(20, 10, bodyRadius, height, true);
         geomBody = new Geometry("Body", body);

@@ -17,6 +17,10 @@ import com.jme3.scene.debug.Arrow;
 import com.jme3.scene.debug.Grid;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.input.InputManager;
+import com.jme3.input.KeyInput;
+import com.jme3.input.controls.KeyTrigger;
+import java.util.ArrayList;
 
 /**
  *
@@ -27,9 +31,10 @@ public class Game extends AbstractAppState
     private Main app;
     private AppStateManager stateManager;
     private BulletAppState bullet;
+    private InputManager inputManager;
     
     private Material testMat;
-    private Player testPlayer;
+    private ArrayList<Player> players;
         
     @Override
     public void initialize(AppStateManager asm, Application anApp)
@@ -38,20 +43,15 @@ public class Game extends AbstractAppState
         stateManager = asm;
         bullet = new BulletAppState();
         stateManager.attach(bullet);
+        inputManager = anApp.getInputManager();
         
         initMaterials();
         initTestLevel();
         showDebugInfo(Main.DEBUG);
         initLights();
         initCam();
-        
-        testPlayer = new Player("One", testMat, new Vector3f(-60, 0, -60), Vector3f.ZERO);
-        RigidBodyControl physPlayer = new RigidBodyControl(30);
-        testPlayer.addControl(physPlayer);
-        physPlayer.setKinematic(true);
-        app.getRootNode().attachChild(testPlayer);
-        bullet.getPhysicsSpace().add(physPlayer);
-        
+
+        initPlayers();
     }
     
     private void initTestLevel()
@@ -66,7 +66,7 @@ public class Game extends AbstractAppState
     private void initCam()
     {
         FlyByCamera flyCam = app.getFlyByCamera();
-        if (Main.DEBUG)
+        /*if (Main.DEBUG)
         {
             flyCam.setEnabled(true);
             flyCam.setMoveSpeed(30f);
@@ -74,7 +74,8 @@ public class Game extends AbstractAppState
         else
         {
             flyCam.setEnabled(false);
-        }
+        }*/
+        flyCam.setEnabled(false);
         
         app.getCamera().setLocation(new Vector3f(0, 160f, 140f));
         app.getCamera().lookAt(new Vector3f(0, 0, 10), Vector3f.UNIT_Y);
@@ -159,5 +160,39 @@ public class Game extends AbstractAppState
             geom.setMaterial(mat);
             rootNode.attachChild(geom);
         }
+    }
+    
+    private void initPlayers() { //may want to add vars for num of human/com players?
+        players = new ArrayList<Player>();
+        
+        Player p1 = new Player("One", testMat, new Vector3f(-50, 0, 0), Vector3f.UNIT_X);
+        RigidBodyControl physPlayer1 = new RigidBodyControl(30);
+        p1.addControl(physPlayer1);
+        app.getRootNode().attachChild(p1);
+        bullet.getPhysicsSpace().add(physPlayer1);
+        players.add(p1);
+        
+        String p1Name = "P1";
+        PlayerInputControl p1Input = new PlayerInputControl(this, p1, p1Name);
+        inputManager.addMapping(p1Name + "Up", new KeyTrigger(KeyInput.KEY_W));
+        inputManager.addMapping(p1Name + "Down", new KeyTrigger(KeyInput.KEY_S));
+        inputManager.addMapping(p1Name + "Left", new KeyTrigger(KeyInput.KEY_A));
+        inputManager.addMapping(p1Name + "Right", new KeyTrigger(KeyInput.KEY_D));
+        inputManager.addListener(p1Input, p1Name + "Up", p1Name + "Down", p1Name + "Left", p1Name + "Right");
+        
+        Player p2 = new Player("One", testMat, new Vector3f(50, 0, 0), Vector3f.UNIT_X);
+        RigidBodyControl physPlayer2 = new RigidBodyControl(30);
+        p2.addControl(physPlayer2);
+        app.getRootNode().attachChild(p2);
+        bullet.getPhysicsSpace().add(physPlayer2);
+        players.add(p2);
+        
+        String p2Name = "P2";
+        PlayerInputControl p2Input = new PlayerInputControl(this, p2, p2Name);
+        inputManager.addMapping(p2Name + "Up", new KeyTrigger(KeyInput.KEY_UP));
+        inputManager.addMapping(p2Name + "Down", new KeyTrigger(KeyInput.KEY_DOWN));
+        inputManager.addMapping(p2Name + "Left", new KeyTrigger(KeyInput.KEY_LEFT));
+        inputManager.addMapping(p2Name + "Right", new KeyTrigger(KeyInput.KEY_RIGHT));
+        inputManager.addListener(p2Input, p2Name + "Up", p2Name + "Down", p2Name + "Left", p2Name + "Right");
     }
 }
