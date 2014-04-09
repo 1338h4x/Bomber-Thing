@@ -245,8 +245,8 @@ public class Game extends AbstractAppState
             inputManager.addMapping(name + "Down", mappings[i][1]);
             inputManager.addMapping(name + "Left", mappings[i][2]);
             inputManager.addMapping(name + "Right", mappings[i][3]);
-            inputManager.addMapping(name + "PlaceBomb", mappings[i][3]);
-            inputManager.addMapping(name + "PickUp", mappings[i][3]);
+            inputManager.addMapping(name + "PlaceBomb", mappings[i][4]);
+            inputManager.addMapping(name + "PickUp", mappings[i][5]);
             inputManager.addListener(playerControl, name + "Up", name + "Down", 
                     name + "Left", name + "Right", name + "PlaceBomb", name + "PickUp");
             

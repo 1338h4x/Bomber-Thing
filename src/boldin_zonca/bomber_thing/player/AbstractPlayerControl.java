@@ -31,14 +31,19 @@ public abstract class AbstractPlayerControl extends AbstractControl implements I
 
     public void placeBomb()
     {
-        Node bombNode = game.getBombFactory().getBomb(BombType.TIME, (Player) spatial);
-        bombNode.setLocalTranslation(spatial.getLocalTranslation());
-        game.getApplication().getRootNode().attachChild(bombNode);
+        Player player = (Player) spatial;
+        int bombCount = player.getBombCount();
+        if (bombCount < player.getMaxBombs())
+        {
+            Node bombNode = game.getBombFactory().getBomb(BombType.TIME, (Player) spatial);
+            bombNode.setLocalTranslation(spatial.getLocalTranslation());
+            game.getApplication().getRootNode().attachChild(bombNode);
         
-        RigidBodyControl physBomb = new RigidBodyControl(100);
-        bombNode.addControl(physBomb);
-        game.getBulletAppState().getPhysicsSpace().add(physBomb);
-        
+    //        RigidBodyControl physBomb = new RigidBodyControl(100);
+    //        bombNode.addControl(physBomb);
+    //        game.getBulletAppState().getPhysicsSpace().add(physBomb);
+            player.setBombCount(bombCount + 1);
+        }
     }
 
     public void kick()
@@ -53,7 +58,9 @@ public abstract class AbstractPlayerControl extends AbstractControl implements I
 
     public void reset()
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Player player = (Player) spatial;
+        
+        player.reset();
     }
     //TODO Fix Player onHit()
     public void onHit(Player assailant)

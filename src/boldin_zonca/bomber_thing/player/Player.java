@@ -23,6 +23,7 @@ public class Player extends GameObject
     private final int MAX_RADIUS = 5;
     
     public enum State {ALIVE, UNCONCIOUS, DEAD};
+    private final Vector3f startPos;
     
     private boolean hasExtraHit;
     private boolean canKick;
@@ -41,6 +42,7 @@ public class Player extends GameObject
 //        geom.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
 //        geom.setMaterial(mat);
         this.setLocalTranslation(pos);
+        startPos = pos;
         
         reset();        
     }
@@ -65,6 +67,26 @@ public class Player extends GameObject
     public void setHasExtraHit(boolean hasExtraHit)
     {
         this.hasExtraHit = hasExtraHit;
+    }
+    
+    public boolean getCanKick()
+    {
+        return canKick;
+    }
+
+    public void setCanKick(boolean canKick)
+    {
+        this.canKick = canKick;
+    }
+    
+    public boolean getCanPickup()
+    {
+        return canPickUp;
+    }
+
+    public void setCanPickup(boolean canPickUp)
+    {
+        this.canPickUp = canPickUp;
     }
 
     public int getMaxBombs()

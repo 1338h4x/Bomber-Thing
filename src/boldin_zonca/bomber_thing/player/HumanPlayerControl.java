@@ -112,7 +112,7 @@ public class HumanPlayerControl extends AbstractPlayerControl implements AnalogL
             {
                 velocity.x = speed;
             }
-            else if (velocity.z > 0)
+            else if (velocity.x > 0)
             {
                 velocity.x = 0;
             }
@@ -126,7 +126,7 @@ public class HumanPlayerControl extends AbstractPlayerControl implements AnalogL
             PICK_UP_PRESSED = false;
             pickUp();
         }
-        if (name.equals(playerName + "pickUp") && isPressed)
+        else if (name.equals(playerName + "pickUp") && isPressed)
         {
             PICK_UP_PRESSED = true;
         }
