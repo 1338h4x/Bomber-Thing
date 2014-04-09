@@ -228,10 +228,11 @@ public class Game extends AbstractAppState
             tempPlayer = new Player(assetManager, name, playerMats[i], startPos[i], Vector3f.ZERO);
             app.getRootNode().attachChild(tempPlayer);
 
-            RigidBodyControl physPlayer = new RigidBodyControl(30);
+            //RigidBodyControl physPlayer = new RigidBodyControl(30);
+            BetterCharacterControl physPlayer = new BetterCharacterControl(4, 10, 30);
             tempPlayer.addControl(physPlayer);
             bullet.getPhysicsSpace().add(physPlayer);
-            physPlayer.setKinematic(true);
+            //physPlayer.setKinematic(true);
             
             HumanPlayerControl playerControl = new HumanPlayerControl(this, name, mappings[i]);
             inputManager.addMapping(name + "Up", mappings[i][0]);
