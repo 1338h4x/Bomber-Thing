@@ -6,6 +6,7 @@ import com.jme3.app.Application;
 import com.jme3.asset.AssetManager;
 import com.jme3.scene.Node;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.control.BetterCharacterControl;
 import com.jme3.input.FlyByCamera;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
@@ -166,14 +167,14 @@ public class Game extends AbstractAppState
         players = new ArrayList<Player>();
         
         Player p1 = new Player("One", testMat, new Vector3f(-50, 0, 0), Vector3f.UNIT_X);
-        RigidBodyControl physPlayer1 = new RigidBodyControl(30);
+        BetterCharacterControl physPlayer1 = new BetterCharacterControl(p1.getRadius(), p1.getHeight(), 30);
         p1.addControl(physPlayer1);
         app.getRootNode().attachChild(p1);
         bullet.getPhysicsSpace().add(physPlayer1);
         players.add(p1);
         
         String p1Name = "P1";
-        PlayerInputControl p1Input = new PlayerInputControl(this, p1, p1Name);
+        PlayerInputControl p1Input = new PlayerInputControl(this, p1, physPlayer1, p1Name);
         inputManager.addMapping(p1Name + "Up", new KeyTrigger(KeyInput.KEY_W));
         inputManager.addMapping(p1Name + "Down", new KeyTrigger(KeyInput.KEY_S));
         inputManager.addMapping(p1Name + "Left", new KeyTrigger(KeyInput.KEY_A));
@@ -181,14 +182,14 @@ public class Game extends AbstractAppState
         inputManager.addListener(p1Input, p1Name + "Up", p1Name + "Down", p1Name + "Left", p1Name + "Right");
         
         Player p2 = new Player("One", testMat, new Vector3f(50, 0, 0), Vector3f.UNIT_X);
-        RigidBodyControl physPlayer2 = new RigidBodyControl(30);
+        BetterCharacterControl physPlayer2 = new BetterCharacterControl(p2.getRadius(), p2.getHeight(), 30);
         p2.addControl(physPlayer2);
         app.getRootNode().attachChild(p2);
         bullet.getPhysicsSpace().add(physPlayer2);
         players.add(p2);
         
         String p2Name = "P2";
-        PlayerInputControl p2Input = new PlayerInputControl(this, p2, p2Name);
+        PlayerInputControl p2Input = new PlayerInputControl(this, p2, physPlayer2, p2Name);
         inputManager.addMapping(p2Name + "Up", new KeyTrigger(KeyInput.KEY_UP));
         inputManager.addMapping(p2Name + "Down", new KeyTrigger(KeyInput.KEY_DOWN));
         inputManager.addMapping(p2Name + "Left", new KeyTrigger(KeyInput.KEY_LEFT));
