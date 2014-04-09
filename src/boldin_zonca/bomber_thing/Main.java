@@ -16,7 +16,7 @@ import com.jme3.system.AppSettings;
  */
 public class Main extends SimpleApplication
 {
-    static final boolean DEBUG = true;
+    static final boolean DEBUG = false;
 
     public static void main(String[] args)
     {
