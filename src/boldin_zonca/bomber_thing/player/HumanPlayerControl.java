@@ -21,14 +21,12 @@ import com.jme3.bullet.control.BetterCharacterControl;
  */
 public class HumanPlayerControl extends AbstractPlayerControl implements AnalogListener, ActionListener
 {
-    private Game game;
     private float speed = 25;
     private boolean PICK_UP_PRESSED = false;
 
-    public HumanPlayerControl(Game aGame, String name, KeyTrigger[] mappings)
-    {
-        game = aGame;
-        
+    public HumanPlayerControl(Game theGame, KeyTrigger[] mappings)
+    {        
+        super(theGame);
         //initControls(mappings);
     }
     

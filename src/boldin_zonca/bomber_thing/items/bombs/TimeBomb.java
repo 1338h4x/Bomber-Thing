@@ -19,7 +19,7 @@ public class TimeBomb extends AbstractBomb
     
     public TimeBomb(AssetManager assetManager, Player player)
     {
-        super(assetManager, "", player);
+        super(assetManager, "/Models/TimeBomb/TimeBomb.mesh.j3o", player);
         currFuseTime = 0;
         maxFuseTime = DEFAULT_FUSE_TIME;
     }

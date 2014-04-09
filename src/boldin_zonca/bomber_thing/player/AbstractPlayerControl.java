@@ -5,6 +5,10 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.scene.control.AbstractControl;
 import com.jme3.math.Vector3f;
 import boldin_zonca.bomber_thing.IDestructable;
+import boldin_zonca.bomber_thing.Game;
+import boldin_zonca.bomber_thing.items.bombs.BombFactory.BombType;
+import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.scene.Node;
 
 /**
  * @author David Boldin & Dan Zonca
@@ -13,6 +17,13 @@ public abstract class AbstractPlayerControl extends AbstractControl implements I
 {
     //public enum Direction {UP, DOWN, LEFT, RIGHT};
     
+    protected Game game;
+    
+    public AbstractPlayerControl(Game theGame)
+    {
+        game = theGame;
+    }
+    
     public void move(Vector3f position)
     {
         spatial.setLocalTranslation(position);
@@ -20,7 +31,14 @@ public abstract class AbstractPlayerControl extends AbstractControl implements I
 
     public void placeBomb()
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Node bombNode = game.getBombFactory().getBomb(BombType.TIME, (Player) spatial);
+        bombNode.setLocalTranslation(spatial.getLocalTranslation());
+        game.getApplication().getRootNode().attachChild(bombNode);
+        
+        RigidBodyControl physBomb = new RigidBodyControl(100);
+        bombNode.addControl(physBomb);
+        game.getBulletAppState().getPhysicsSpace().add(physBomb);
+        
     }
 
     public void kick()

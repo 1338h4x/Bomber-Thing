@@ -4,6 +4,7 @@ import boldin_zonca.bomber_thing.player.Player;
 import boldin_zonca.bomber_thing.player.HumanPlayerControl;
 import boldin_zonca.bomber_thing.player.AbstractPlayerControl;
 import boldin_zonca.bomber_thing.level.Level;
+import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.app.Application;
@@ -212,13 +213,17 @@ public class Game extends AbstractAppState
                 new KeyTrigger(KeyInput.KEY_W),
                 new KeyTrigger(KeyInput.KEY_S),
                 new KeyTrigger(KeyInput.KEY_A),
-                new KeyTrigger(KeyInput.KEY_D)
+                new KeyTrigger(KeyInput.KEY_D),
+                new KeyTrigger(KeyInput.KEY_E),
+                new KeyTrigger(KeyInput.KEY_Q)
             },
             {
                 new KeyTrigger(KeyInput.KEY_I),
                 new KeyTrigger(KeyInput.KEY_K),
                 new KeyTrigger(KeyInput.KEY_J),
-                new KeyTrigger(KeyInput.KEY_L)
+                new KeyTrigger(KeyInput.KEY_L),
+                new KeyTrigger(KeyInput.KEY_U),
+                new KeyTrigger(KeyInput.KEY_O)
             }
         };
 
@@ -234,20 +239,40 @@ public class Game extends AbstractAppState
             bullet.getPhysicsSpace().add(physPlayer);
             //physPlayer.setKinematic(true);
             
-            HumanPlayerControl playerControl = new HumanPlayerControl(this, name, mappings[i]);
+            HumanPlayerControl playerControl = new HumanPlayerControl(this, mappings[i]);
+            
             inputManager.addMapping(name + "Up", mappings[i][0]);
             inputManager.addMapping(name + "Down", mappings[i][1]);
             inputManager.addMapping(name + "Left", mappings[i][2]);
             inputManager.addMapping(name + "Right", mappings[i][3]);
-            inputManager.addListener(playerControl, name + "Up", name + "Down", name + "Left", name + "Right");
+            inputManager.addMapping(name + "PlaceBomb", mappings[i][3]);
+            inputManager.addMapping(name + "PickUp", mappings[i][3]);
+            inputManager.addListener(playerControl, name + "Up", name + "Down", 
+                    name + "Left", name + "Right", name + "PlaceBomb", name + "PickUp");
+            
             tempPlayer.addControl(playerControl);
             
             players.add(tempPlayer);
         }
     }
 
-    public Application getApplication()
+    public Main getApplication()
     {
         return app;
+    }
+    
+    public BulletAppState getBulletAppState()
+    {
+        return bullet;
+    }
+    
+    public BombFactory getBombFactory()
+    {
+        return bombFactory;
+    }
+    
+    public ItemFactory getItemFactory()
+    {
+            return itemFactory;
     }
 }
