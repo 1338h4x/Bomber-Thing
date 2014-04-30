@@ -7,5 +7,4 @@ package boldin_zonca.bomber_thing;
 public interface IExplosive
 {
     void detonate();
-    
 }

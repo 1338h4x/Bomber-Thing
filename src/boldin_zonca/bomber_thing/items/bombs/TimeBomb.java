@@ -4,6 +4,7 @@ package boldin_zonca.bomber_thing.items.bombs;
 import boldin_zonca.bomber_thing.items.bombs.AbstractBomb;
 import boldin_zonca.bomber_thing.player.Player;
 import boldin_zonca.bomber_thing.IExplosive;
+import boldin_zonca.bomber_thing.IUpdatable;
 import com.jme3.scene.Node;
 import com.jme3.asset.AssetManager;
 
@@ -11,7 +12,7 @@ import com.jme3.asset.AssetManager;
  *
  * @author dan
  */
-public class TimeBomb extends AbstractBomb
+public class TimeBomb extends AbstractBomb implements IUpdatable
 {
     protected float maxFuseTime;
     protected float currFuseTime;
@@ -33,12 +34,19 @@ public class TimeBomb extends AbstractBomb
     
     public void detonate()
     {
-        
+        System.out.println("Detonating TimeBomb!");
     }
 
     public void onHit(Player assailant)
     {
         detonate();
+    }
+    
+    public void update(float tpf) {
+        currFuseTime += tpf;
+        if (currFuseTime >= maxFuseTime) {
+            detonate();
+        }
     }
     
 }

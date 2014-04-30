@@ -34,6 +34,7 @@ import boldin_zonca.bomber_thing.items.bombs.BombFactory;
 import com.jme3.bullet.control.BetterCharacterControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
+import com.jme3.scene.Spatial;
 
 /**
  *
@@ -274,5 +275,15 @@ public class Game extends AbstractAppState
     public ItemFactory getItemFactory()
     {
             return itemFactory;
+    }
+
+    @Override
+    public void update(float tpf) {
+        //update ubdatables
+        for (Spatial s: app.getRootNode().getChildren()) {
+            if (s instanceof IUpdatable) {
+                ((IUpdatable)s).update(tpf);
+            }
+        }
     }
 }
