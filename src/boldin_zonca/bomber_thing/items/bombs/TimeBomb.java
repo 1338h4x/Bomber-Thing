@@ -7,6 +7,7 @@ import boldin_zonca.bomber_thing.IExplosive;
 import boldin_zonca.bomber_thing.IUpdatable;
 import com.jme3.scene.Node;
 import com.jme3.asset.AssetManager;
+import com.jme3.math.Vector3f;
 
 /**
  *
@@ -34,7 +35,13 @@ public class TimeBomb extends AbstractBomb implements IUpdatable
     
     public void detonate()
     {
-        System.out.println("Detonating TimeBomb!");
+        //System.out.println("Detonating TimeBomb!");
+        Explosion e = new Explosion(3f, super.owner.getBombRadius(), super.assetManager);
+        Vector3f pos = this.getLocalTranslation();
+        e.setLocalTranslation(pos);
+        this.getParent().attachChild(e);
+        super.owner.setBombCount(super.owner.getBombCount() - 1);
+        this.removeFromParent();
     }
 
     public void onHit(Player assailant)

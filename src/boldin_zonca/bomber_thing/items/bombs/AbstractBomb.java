@@ -16,11 +16,13 @@ import com.jme3.asset.AssetManager;
 public abstract class AbstractBomb extends GameObject implements IExplosive, IDestructable
 {
     protected Player owner;
+    protected AssetManager assetManager;
 
     public AbstractBomb(AssetManager assetManager, String filename, Player owner)
     {
         super(assetManager, filename);
         this.owner = owner;
+        this.assetManager = assetManager;
     }
     
     public abstract void detonate();

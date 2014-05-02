@@ -20,7 +20,7 @@ import boldin_zonca.bomber_thing.GameObject;
 public class Player extends GameObject
 {
     private final int MAX_BOMBS = 10;
-    private final int MAX_RADIUS = 5;
+    private final float MAX_RADIUS = 100f;
     
     public enum State {ALIVE, UNCONCIOUS, DEAD};
     private final Vector3f startPos;
@@ -30,7 +30,7 @@ public class Player extends GameObject
     private boolean canPickUp;
     private int maxBombs;
     private int bombCount;
-    private int bombRadius;    
+    private float bombRadius;    
     private BombType bombType;
     private AbstractEffect currEffect;
     
@@ -54,7 +54,7 @@ public class Player extends GameObject
         canPickUp = false;
         maxBombs = 1;
         bombCount = 0;
-        bombRadius = 1;    
+        bombRadius = 20f;    
         bombType = BombType.TIME;
         currEffect = null;
     }
@@ -112,12 +112,12 @@ public class Player extends GameObject
         this.bombCount = bombCount;
     }
 
-    public int getBombRadius()
+    public float getBombRadius()
     {
         return bombRadius;
     }
 
-    public void setBombRadius(int bombRadius)
+    public void setBombRadius(float bombRadius)
     {
         if (bombRadius > MAX_RADIUS)
             this.bombRadius = MAX_RADIUS;
