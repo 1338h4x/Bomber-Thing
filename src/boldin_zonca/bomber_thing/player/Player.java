@@ -14,6 +14,8 @@ import boldin_zonca.bomber_thing.items.bombs.BombFactory.BombType;
 import boldin_zonca.bomber_thing.GameObject;
 import boldin_zonca.bomber_thing.IUpdatable;
 import com.jme3.bullet.control.BetterCharacterControl;
+import com.jme3.font.BitmapFont;
+import com.jme3.font.BitmapText;
 
 /**
  *
@@ -41,6 +43,8 @@ public class Player extends GameObject implements IUpdatable
     private int lives;
     private float respawnTimer;
     
+    private BitmapText hudText;
+    
     public Player(AssetManager assetManager, String aName, Material mat, Vector3f pos, Vector3f dir)
     {
         super(assetManager, "Models/Player/Player.mesh.j3o");
@@ -51,6 +55,9 @@ public class Player extends GameObject implements IUpdatable
         startPos = pos;
         this.setLocalTranslation(startPos);
         lives = START_LIVES;
+        BitmapFont myFont = assetManager.loadFont("Interface/Fonts/Console.fnt");
+        hudText = new BitmapText(myFont, false);
+        hudText.setText(name + ": " + lives);
         
         reset();        
     }
@@ -160,6 +167,7 @@ public class Player extends GameObject implements IUpdatable
     public void takeDamage() {
         if (curState == State.ALIVE) {
             lives--;
+            hudText.setText(name + ": " + lives);
             if (lives > 0) {
                 curState = State.UNCONSCIOUS;
                 respawnTimer = TIME_TO_RESPAWN;
@@ -185,5 +193,9 @@ public class Player extends GameObject implements IUpdatable
                 this.getControl(BetterCharacterControl.class).warp(startPos);
             }
         }
+    }
+    
+    public BitmapText getHudText() {
+        return hudText;
     }
 }

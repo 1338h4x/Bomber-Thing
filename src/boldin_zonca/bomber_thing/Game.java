@@ -35,6 +35,7 @@ import boldin_zonca.bomber_thing.items.bombs.Explosion;
 import com.jme3.bullet.control.BetterCharacterControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
+import com.jme3.font.BitmapText;
 import com.jme3.scene.Spatial;
 
 /**
@@ -134,6 +135,11 @@ public class Game extends AbstractAppState
         AmbientLight ambient = new AmbientLight();
         ambient.setColor(ColorRGBA.White.mult(0.0f));
         app.getRootNode().addLight(ambient);
+        
+        AmbientLight ambientGui = new AmbientLight();
+        ambientGui.setColor(ColorRGBA.White);
+        app.getGuiNode().addLight(ambientGui);
+        
         /**
          * A white, directional light source
          */
@@ -253,6 +259,28 @@ public class Game extends AbstractAppState
                     name + "Left", name + "Right", name + "PlaceBomb", name + "PickUp");
             
             tempPlayer.addControl(playerControl);
+            
+            BitmapText hudText = tempPlayer.getHudText();
+            hudText.setSize(hudText.getFont().getCharSet().getRenderedSize());
+            if (i == 0) {
+                hudText.setColor(ColorRGBA.Red);
+                //can't figure out how to get AppSettings, so for the time being just gonna hardcode resolution
+                hudText.setLocalTranslation(25, 25, 0);
+            } else if (i == 1) {
+                hudText.setColor(ColorRGBA.Blue);
+                hudText.setLocalTranslation(1024 - 25 - hudText.getLineWidth(), 25, 0);
+            } else if (i == 2) {
+                hudText.setColor(ColorRGBA.Green);
+                hudText.setLocalTranslation(25, 768 - 25 - hudText.getLineHeight(), 0);
+            } else if (i == 3) {
+                hudText.setColor(ColorRGBA.Yellow);
+                hudText.setLocalTranslation(1024 - 25 - hudText.getLineWidth(), 768 - 25 - hudText.getLineHeight(), 0);
+            }
+            app.getGuiNode().attachChild(hudText);
+            
+            System.out.println(hudText.getText());
+            System.out.println(hudText.getColor());
+            System.out.println(hudText.getLocalTranslation());
             
             players.add(tempPlayer);
         }
