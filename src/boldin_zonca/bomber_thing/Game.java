@@ -30,6 +30,7 @@ import com.jme3.bullet.collision.shapes.CollisionShape;
 import java.util.ArrayList;
 import boldin_zonca.bomber_thing.items.ItemFactory;
 import boldin_zonca.bomber_thing.items.bombs.BombFactory;
+import boldin_zonca.bomber_thing.items.bombs.Explosion;
 
 import com.jme3.bullet.control.BetterCharacterControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
@@ -283,6 +284,23 @@ public class Game extends AbstractAppState
         for (Spatial s: app.getRootNode().getChildren()) {
             if (s instanceof IUpdatable) {
                 ((IUpdatable)s).update(tpf);
+            }
+        }
+        
+        //check explosion collisions
+        //they're spheres, and I don't want them to have physics, so this is ultimately easier than setting up collision shapes.
+        //doesn't take into account player mesh shape however, but that's no biggie consider it an approximation
+        for (Spatial s: app.getRootNode().getChildren()) {
+            if (s instanceof Explosion) {
+                Explosion explosion = (Explosion)s;
+                for (Player p: players) {
+                    float distance = explosion.getLocalTranslation().distance(p.getLocalTranslation());
+                    if (distance <= explosion.getRadius()) {
+                        //System.out.println(p.getName() + " is hit!");
+                        p.takeDamage();
+                    }
+                    
+                }
             }
         }
     }

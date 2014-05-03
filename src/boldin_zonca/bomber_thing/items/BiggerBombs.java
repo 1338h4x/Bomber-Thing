@@ -10,7 +10,7 @@ public class BiggerBombs extends AbstractEffect
     @Override
     protected void addEffect()
     {
-        player.setBombRadius(player.getBombRadius() + 1);
+        player.setBombRadius(player.getBombRadius() + 12.5f);
     }
 
     @Override

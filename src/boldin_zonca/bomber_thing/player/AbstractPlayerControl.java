@@ -32,17 +32,20 @@ public abstract class AbstractPlayerControl extends AbstractControl implements I
     public void placeBomb()
     {
         Player player = (Player) spatial;
-        int bombCount = player.getBombCount();
-        if (bombCount < player.getMaxBombs())
-        {
-            Node bombNode = game.getBombFactory().getBomb(BombType.TIME, (Player) spatial);
-            bombNode.setLocalTranslation(spatial.getLocalTranslation());
-            game.getApplication().getRootNode().attachChild(bombNode);
-        
-    //        RigidBodyControl physBomb = new RigidBodyControl(100);
-    //        bombNode.addControl(physBomb);
-    //        game.getBulletAppState().getPhysicsSpace().add(physBomb);
-            player.setBombCount(bombCount + 1);
+        if (player.getState() == Player.State.ALIVE) {
+
+            int bombCount = player.getBombCount();
+            if (bombCount < player.getMaxBombs())
+            {
+                Node bombNode = game.getBombFactory().getBomb(BombType.TIME, (Player) spatial);
+                bombNode.setLocalTranslation(spatial.getLocalTranslation());
+                game.getApplication().getRootNode().attachChild(bombNode);
+
+                //RigidBodyControl physBomb = new RigidBodyControl(100);
+                //bombNode.addControl(physBomb);
+                //game.getBulletAppState().getPhysicsSpace().add(physBomb);
+                player.setBombCount(bombCount + 1);
+            }
         }
     }
 

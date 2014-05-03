@@ -54,4 +54,8 @@ public class Explosion extends Node implements IUpdatable {
         }
     }
     
+    public float getRadius() {
+        return sphere.getRadius();
+    }
+    
 }

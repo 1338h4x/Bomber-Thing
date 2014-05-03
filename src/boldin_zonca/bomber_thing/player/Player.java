@@ -12,17 +12,22 @@ import com.jme3.asset.AssetManager;
 import boldin_zonca.bomber_thing.items.AbstractEffect;
 import boldin_zonca.bomber_thing.items.bombs.BombFactory.BombType;
 import boldin_zonca.bomber_thing.GameObject;
+import boldin_zonca.bomber_thing.IUpdatable;
+import com.jme3.bullet.control.BetterCharacterControl;
 
 /**
  *
  * @author David Boldin & Dan Zonca
  */
-public class Player extends GameObject
+public class Player extends GameObject implements IUpdatable
 {
     private final int MAX_BOMBS = 10;
     private final float MAX_RADIUS = 100f;
+    private final int START_LIVES = 5;
+    private final float TIME_TO_RESPAWN = 3f;
     
-    public enum State {ALIVE, UNCONCIOUS, DEAD};
+    public enum State {ALIVE, UNCONSCIOUS, DEAD};
+    private State curState;
     private final Vector3f startPos;
     
     private boolean hasExtraHit;
@@ -33,6 +38,8 @@ public class Player extends GameObject
     private float bombRadius;    
     private BombType bombType;
     private AbstractEffect currEffect;
+    private int lives;
+    private float respawnTimer;
     
     public Player(AssetManager assetManager, String aName, Material mat, Vector3f pos, Vector3f dir)
     {
@@ -41,8 +48,9 @@ public class Player extends GameObject
 //        Geometry geom = (Geometry) this.getChild("model");
 //        geom.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
 //        geom.setMaterial(mat);
-        this.setLocalTranslation(pos);
         startPos = pos;
+        this.setLocalTranslation(startPos);
+        lives = START_LIVES;
         
         reset();        
     }
@@ -54,9 +62,11 @@ public class Player extends GameObject
         canPickUp = false;
         maxBombs = 1;
         bombCount = 0;
-        bombRadius = 20f;    
+        bombRadius = 25f;    
         bombType = BombType.TIME;
         currEffect = null;
+        curState = State.ALIVE;
+        respawnTimer = 0;
     }
     
     public boolean getHasExtraHit()
@@ -145,5 +155,35 @@ public class Player extends GameObject
         if (this.currEffect != null)
             this.currEffect.remove();
         this.currEffect = currEffect;
+    }
+    
+    public void takeDamage() {
+        if (curState == State.ALIVE) {
+            lives--;
+            if (lives > 0) {
+                curState = State.UNCONSCIOUS;
+                respawnTimer = TIME_TO_RESPAWN;
+            } else {
+                curState = State.DEAD;
+            }
+            //Quick and dirty shortcut to get the player offscreen and not interacting with physics?
+            //Just hide them far away!
+            //...terrible, I know. But it'll do the trick.
+            this.getControl(BetterCharacterControl.class).warp(new Vector3f(100000f, 100000f, 100000f));
+        }
+    }
+    
+    public State getState() {
+        return curState;
+    }
+    
+    public void update(float tpf) {
+        if (curState == State.UNCONSCIOUS) {
+            respawnTimer -= tpf;
+            if (respawnTimer <= 0) {
+                reset();
+                this.getControl(BetterCharacterControl.class).warp(startPos);
+            }
+        }
     }
 }
