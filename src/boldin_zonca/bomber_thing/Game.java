@@ -261,20 +261,20 @@ public class Game extends AbstractAppState
             tempPlayer.addControl(playerControl);
             
             BitmapText hudText = tempPlayer.getHudText();
-            hudText.setSize(hudText.getFont().getCharSet().getRenderedSize());
+            hudText.setSize(hudText.getFont().getCharSet().getRenderedSize() * 5);
             if (i == 0) {
                 hudText.setColor(ColorRGBA.Red);
                 //can't figure out how to get AppSettings, so for the time being just gonna hardcode resolution
-                hudText.setLocalTranslation(25, 25, 0);
+                hudText.setLocalTranslation(25, 768 - 25, 0);
             } else if (i == 1) {
                 hudText.setColor(ColorRGBA.Blue);
-                hudText.setLocalTranslation(1024 - 25 - hudText.getLineWidth(), 25, 0);
+                hudText.setLocalTranslation(1024 - 25 - hudText.getLineWidth(), 768 - 25, 0);
             } else if (i == 2) {
                 hudText.setColor(ColorRGBA.Green);
-                hudText.setLocalTranslation(25, 768 - 25 - hudText.getLineHeight(), 0);
+                hudText.setLocalTranslation(25, 25 + hudText.getLineHeight(), 0);
             } else if (i == 3) {
                 hudText.setColor(ColorRGBA.Yellow);
-                hudText.setLocalTranslation(1024 - 25 - hudText.getLineWidth(), 768 - 25 - hudText.getLineHeight(), 0);
+                hudText.setLocalTranslation(1024 - 25 - hudText.getLineWidth(), 25 + hudText.getLineHeight(), 0);
             }
             app.getGuiNode().attachChild(hudText);
             
