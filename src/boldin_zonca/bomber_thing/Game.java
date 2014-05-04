@@ -62,6 +62,7 @@ public class Game extends AbstractAppState
     private boolean suddenDeath;
     private int suddenDeathBombCount;
     private float suddenDeathNextBombAt;
+    private boolean gameOver;
 
     private Material[] playerMats;
     private ArrayList<Player> players;
@@ -80,6 +81,7 @@ public class Game extends AbstractAppState
         suddenDeath = false;
         suddenDeathBombCount = 0;
         suddenDeathNextBombAt = TIME_LIMIT;
+        gameOver = false;
 
         initMaterials();
         initLevel();
@@ -339,62 +341,64 @@ public class Game extends AbstractAppState
 
     @Override
     public void update(float tpf) {
-        time += tpf;
-        int timeLeft = (int)(TIME_LIMIT - time);
-        if (timeLeft > 0) {
-            int mins = (int)(timeLeft / 60);
-            int seconds = timeLeft % 60;
-            String timeStr;
-            if (seconds < 10) {
-                timeStr = mins+":0"+seconds;
+        if (!gameOver) {
+            time += tpf;
+            int timeLeft = (int)(TIME_LIMIT - time);
+            if (timeLeft > 0) {
+                int mins = (int)(timeLeft / 60);
+                int seconds = timeLeft % 60;
+                String timeStr;
+                if (seconds < 10) {
+                    timeStr = mins+":0"+seconds;
+                } else {
+                    timeStr = mins+":"+seconds;
+                }
+                timerText.setText(timeStr);
             } else {
-                timeStr = mins+":"+seconds;
-            }
-            timerText.setText(timeStr);
-        } else {
-            if (!suddenDeath) {
-                suddenDeath = true;
-                timerText.setText("Sudden death!");
-                timerText.setLocalTranslation((1024 - timerText.getLineWidth())/2, 768 - 20, 0);
-                //Everyone gets +2 max bombs and +50% bomb radius!
-                for (Player p: players) {
-                    p.setMaxBombs(p.getMaxBombs() + 2);
-                    p.setBombRadius(p.getBombRadius() + 12.5f);
+                if (!suddenDeath) {
+                    suddenDeath = true;
+                    timerText.setText("Sudden death!");
+                    timerText.setLocalTranslation((1024 - timerText.getLineWidth())/2, 768 - 20, 0);
+                    //Everyone gets +2 max bombs and +50% bomb radius!
+                    for (Player p: players) {
+                        p.setMaxBombs(p.getMaxBombs() + 2);
+                        p.setBombRadius(p.getBombRadius() + 12.5f);
+                    }
+                }
+                while (time > suddenDeathNextBombAt) {
+                    //Spawn a time bomb at a random spot
+                    Random rand = new Random();
+                    float xPos = rand.nextFloat() * 120 - 60;
+                    float zPos = rand.nextFloat() * 120 - 60;
+                    //System.out.println("Spawning bomb at " + xPos + ", " + yPos);
+                    //Each one is slightly bigger than the last!
+                    TimeBomb bomb = new TimeBomb(app.getAssetManager(), 20f + 2.5f * suddenDeathBombCount);
+
+                    //Note: If we get physics working, move the y coord up so they drop from the sky instead!
+                    bomb.setLocalTranslation(xPos, 0, zPos);
+
+                    //Trying to give bombs physics just crashes. :(
+                    //CollisionShape collBomb = CollisionShapeFactory.createMeshShape(bomb);
+                    //RigidBodyControl physBomb = new RigidBodyControl(collBomb, 2);
+                    //bomb.addControl(physBomb);
+                    app.getRootNode().attachChild(bomb);
+                    //bullet.getPhysicsSpace().add(physBomb);
+                    //bomb.setSolid(true);
+
+                    //And they spawn faster and faster over time!
+                    suddenDeathNextBombAt += 50f / (5 + suddenDeathBombCount);
+                    suddenDeathBombCount++;
                 }
             }
-            while (time > suddenDeathNextBombAt) {
-                //Spawn a time bomb at a random spot
-                Random rand = new Random();
-                float xPos = rand.nextFloat() * 120 - 60;
-                float zPos = rand.nextFloat() * 120 - 60;
-                //System.out.println("Spawning bomb at " + xPos + ", " + yPos);
-                //Each one is slightly bigger than the last!
-                TimeBomb bomb = new TimeBomb(app.getAssetManager(), 20f + 2.5f * suddenDeathBombCount);
-                
-                //Note: If we get physics working, move the y coord up so they drop from the sky instead!
-                bomb.setLocalTranslation(xPos, 0, zPos);
-                
-                //Trying to give bombs physics just crashes. :(
-                //CollisionShape collBomb = CollisionShapeFactory.createMeshShape(bomb);
-                //RigidBodyControl physBomb = new RigidBodyControl(collBomb, 2);
-                //bomb.addControl(physBomb);
-                app.getRootNode().attachChild(bomb);
-                //bullet.getPhysicsSpace().add(physBomb);
-                //bomb.setSolid(true);
-                
-                //And they spawn faster and faster over time!
-                suddenDeathNextBombAt += 50f / (5 + suddenDeathBombCount);
-                suddenDeathBombCount++;
-            }
         }
-        
+
         //update updatables
         for (Spatial s: app.getRootNode().getChildren()) {
             if (s instanceof IUpdatable) {
                 ((IUpdatable)s).update(tpf);
             }
         }
-        
+
         //check explosion and non-solid bomb collisions
         //they're spheres, and I don't want them to have physics, so this is ultimately easier than setting up collision shapes.
         //doesn't take into account player mesh shape however, but that's no biggie consider it an approximation
@@ -403,7 +407,7 @@ public class Game extends AbstractAppState
                 Explosion explosion = (Explosion)s;
                 for (Player p: players) {
                     float distance = explosion.getLocalTranslation().distance(p.getLocalTranslation());
-                    if (distance <= explosion.getRadius() + 5f) { //5f for approximate size of player
+                    if (distance <= explosion.getRadius() + 5f && !gameOver) { //5f for approximate size of player
                         //System.out.println(p.getName() + " is hit!");
                         p.takeDamage();
                     } 
@@ -412,13 +416,13 @@ public class Game extends AbstractAppState
             //Check to see if nobody's standing on it, then make it solid
             } else if (s instanceof AbstractBomb) {
                 //No idea what's going on, but they just fall through and then throw a NullPointerException
-                
+
                 /*AbstractBomb bomb = (AbstractBomb) s;
                 if (!bomb.isSolid()) {
                     boolean collisionFound = false;
                     for (Player p: players) {
                         float distance = bomb.getLocalTranslation().distance(p.getLocalTranslation());
-                        if (distance <= 10f) { //Approximation
+                        if (distance <= 7f) { //Approximation, fiddle until it feels right
                             collisionFound = true;
                         } 
                     }
@@ -433,6 +437,32 @@ public class Game extends AbstractAppState
                     }
                 }*/
             }
+        }
+        
+        checkForGameOver();
+    }
+    
+    private void checkForGameOver() {
+        if (gameOver) return;
+        int survivingPlayers = 0;
+        Player survivor = null;
+        for (Player p: players) {
+            if (p.getState() != Player.State.DEAD) {
+                survivingPlayers++;
+                survivor = p;
+            }
+        }
+        if (survivingPlayers == 0) {
+            //What are the odds everyone dies on the same frame? Nonzero, I guess.
+            gameOver = true;
+            timerText.setText("Draw game!");
+            timerText.setSize(timerText.getSize()*2);
+            timerText.setLocalTranslation((1024 - timerText.getLineWidth())/2, (768 + timerText.getLineHeight())/2,0);
+        } else if (survivingPlayers == 1) {
+            gameOver = true;
+            timerText.setText(survivor.getName() + " wins!");
+            timerText.setSize(timerText.getSize()*2);
+            timerText.setLocalTranslation((1024 - timerText.getLineWidth())/2, 768/2 + timerText.getLineHeight(),0);
         }
     }
 }
