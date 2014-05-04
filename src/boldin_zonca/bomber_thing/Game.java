@@ -48,7 +48,7 @@ import java.util.Random;
  */
 public class Game extends AbstractAppState
 {
-    private final float TIME_LIMIT = 3*60;
+    private final float TIME_LIMIT = 3;
 
     private Main app;
     private AppStateManager stateManager;
@@ -391,11 +391,8 @@ public class Game extends AbstractAppState
                     //System.out.println("Spawning bomb at " + xPos + ", " + yPos);
                     //Each one is slightly bigger than the last!
                     TimeBomb bomb = new TimeBomb(app.getAssetManager(), 15f + 1.25f * suddenDeathBombCount);
-
-                    //Note: If we get physics working, move the y coord up so they drop from the sky instead!
-                    bomb.setLocalTranslation(xPos, 25, zPos);
-
-                    //Trying to give bombs physics just crashes. :(
+                    //They fall from the sky!
+                    bomb.setLocalTranslation(xPos, 30, zPos);
                     app.getRootNode().attachChild(bomb);
                     bomb.addPhysics(bullet.getPhysicsSpace());
                     
@@ -446,8 +443,6 @@ public class Game extends AbstractAppState
             //Bombs are not solid when first placed, so that they don't push the player immediately
             //Check to see if nobody's standing on it, then make it solid
             } else if (s instanceof AbstractBomb) {
-                //No idea what's going on, but they just fall through and then throw a NullPointerException
-
                 AbstractBomb bomb = (AbstractBomb) s;
                 if (!bomb.isSolid()) {
                     boolean collisionFound = false;
@@ -481,14 +476,14 @@ public class Game extends AbstractAppState
         if (survivingPlayers == 0) {
             //What are the odds everyone dies on the same frame? Nonzero, I guess.
             gameOver = true;
-            timerText.setText("Draw game!");
+            timerText.setText("No survivors!");
             timerText.setSize(timerText.getSize()*2);
             timerText.setLocalTranslation((1024 - timerText.getLineWidth())/2, (768 + timerText.getLineHeight())/2,0);
         } else if (survivingPlayers == 1) {
             gameOver = true;
             timerText.setText(survivor.getName() + " wins!");
             timerText.setSize(timerText.getSize()*2);
-            timerText.setLocalTranslation((1024 - timerText.getLineWidth())/2, 768/2 + timerText.getLineHeight(),0);
+            timerText.setLocalTranslation((1024 - timerText.getLineWidth())/2, (768 + timerText.getLineHeight())/2,0);
         }
     }
 }
