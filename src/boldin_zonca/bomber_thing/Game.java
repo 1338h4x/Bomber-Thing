@@ -48,7 +48,7 @@ import java.util.Random;
  */
 public class Game extends AbstractAppState
 {
-    private final float TIME_LIMIT = 3;
+    private final float TIME_LIMIT = 3*60;
 
     private Main app;
     private AppStateManager stateManager;
