@@ -20,10 +20,11 @@ public class Level extends GameObject
     public Vector3f[] getStartPositions()
     {
         return new Vector3f[]{
-            new Vector3f(-60, 0, -60),
-            new Vector3f(60, 0, -60),
-            new Vector3f(-60, 0, 60),
-            new Vector3f(60, 0, 60),
+            //have to move them up a little bit, else they bounce for some reason
+            new Vector3f(-60, 2, -60),
+            new Vector3f(60, 2, -60),
+            new Vector3f(-60, 2, 60),
+            new Vector3f(60, 2, 60),
         };
     }
 }

@@ -74,6 +74,8 @@ public class Game extends AbstractAppState
         stateManager = asm;
         bullet = new BulletAppState();
         stateManager.attach(bullet);
+        //default gravity isn't enough
+        bullet.getPhysicsSpace().setGravity(new Vector3f(0, -9.81f * 5, 0));
         inputManager = anApp.getInputManager();
         bombFactory = new BombFactory(app.getAssetManager());
         itemFactory = new ItemFactory(app.getAssetManager());
@@ -292,7 +294,7 @@ public class Game extends AbstractAppState
             app.getRootNode().attachChild(tempPlayer);
 
             //RigidBodyControl physPlayer = new RigidBodyControl(30);
-            BetterCharacterControl physPlayer = new BetterCharacterControl(4, 10, 30);
+            BetterCharacterControl physPlayer = new BetterCharacterControl(4, 10, 50);
             tempPlayer.addControl(physPlayer);
             bullet.getPhysicsSpace().add(physPlayer);
             //physPlayer.setKinematic(true);
@@ -388,21 +390,18 @@ public class Game extends AbstractAppState
                     float zPos = rand.nextFloat() * 120 - 60;
                     //System.out.println("Spawning bomb at " + xPos + ", " + yPos);
                     //Each one is slightly bigger than the last!
-                    TimeBomb bomb = new TimeBomb(app.getAssetManager(), 20f + 2.5f * suddenDeathBombCount);
+                    TimeBomb bomb = new TimeBomb(app.getAssetManager(), 15f + 1.25f * suddenDeathBombCount);
 
                     //Note: If we get physics working, move the y coord up so they drop from the sky instead!
-                    bomb.setLocalTranslation(xPos, 0, zPos);
+                    bomb.setLocalTranslation(xPos, 25, zPos);
 
                     //Trying to give bombs physics just crashes. :(
-                    //CollisionShape collBomb = CollisionShapeFactory.createMeshShape(bomb);
-                    //RigidBodyControl physBomb = new RigidBodyControl(collBomb, 2);
-                    //bomb.addControl(physBomb);
                     app.getRootNode().attachChild(bomb);
-                    //bullet.getPhysicsSpace().add(physBomb);
-                    //bomb.setSolid(true);
+                    bomb.addPhysics(bullet.getPhysicsSpace());
+                    
 
                     //And they spawn faster and faster over time!
-                    suddenDeathNextBombAt += 50f / (5 + suddenDeathBombCount);
+                    suddenDeathNextBombAt += 62.5f / (25 + suddenDeathBombCount);
                     suddenDeathBombCount++;
                 }
             }
@@ -428,30 +427,41 @@ public class Game extends AbstractAppState
                         p.takeDamage();
                     } 
                 }
+                //check for explosions hitting bombs, sending them flying!
+                for (Spatial s2: app.getRootNode().getChildren()) {
+                    if (s2 instanceof AbstractBomb) {
+                        AbstractBomb bomb = (AbstractBomb)s2;
+                        float distance = explosion.getLocalTranslation().distance(bomb.getLocalTranslation());
+                        if (distance < explosion.getRadius()) {
+                            //stronger force at center of large explosion, weak force at the edge
+                            Vector3f direction = bomb.getLocalTranslation().subtract(explosion.getLocalTranslation()).normalize();
+                            Vector3f force = direction.mult(explosion.getMaxRadius() - distance);
+                            RigidBodyControl bombPhys = bomb.getControl(RigidBodyControl.class);
+                            if (bombPhys != null) {
+                                bombPhys.applyImpulse(force, Vector3f.ZERO);
+                            }
+                        }
+                    }
+                }
             //Bombs are not solid when first placed, so that they don't push the player immediately
             //Check to see if nobody's standing on it, then make it solid
             } else if (s instanceof AbstractBomb) {
                 //No idea what's going on, but they just fall through and then throw a NullPointerException
 
-                /*AbstractBomb bomb = (AbstractBomb) s;
+                AbstractBomb bomb = (AbstractBomb) s;
                 if (!bomb.isSolid()) {
                     boolean collisionFound = false;
                     for (Player p: players) {
                         float distance = bomb.getLocalTranslation().distance(p.getLocalTranslation());
-                        if (distance <= 7f) { //Approximation, fiddle until it feels right
+                        if (distance <= 6f) { //Approximation, fiddle until it feels right
                             collisionFound = true;
                         } 
                     }
                     if (!collisionFound) {
-                        System.out.println("Adding physics to bomb now");
-                        CollisionShape collBomb = CollisionShapeFactory.createMeshShape(bomb);
-                        RigidBodyControl physBomb = new RigidBodyControl(collBomb, 2);
-                        bomb.addControl(physBomb);
-                        app.getRootNode().attachChild(bomb);
-                        bullet.getPhysicsSpace().add(physBomb);
-                        bomb.setSolid(true);
+                        //System.out.println("Adding physics to bomb now");
+                        bomb.addPhysics(bullet.getPhysicsSpace());
                     }
-                }*/
+                }
             }
         }
         

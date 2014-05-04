@@ -30,7 +30,7 @@ public class Explosion extends Node implements IUpdatable {
         maxRadius = radius;
         //System.out.println("Duration: " + maxDuration + ", radius: " + maxRadius);
         
-        sphere = new Sphere(24, 24, MIN_RADIUS);
+        sphere = new Sphere(32, 32, MIN_RADIUS);
         Geometry geo = new Geometry("ExplosionSphere", sphere);
         
         //There should be an better way to actually pass this in from where Game
@@ -48,7 +48,7 @@ public class Explosion extends Node implements IUpdatable {
         if (time <= maxDuration) {
             float newRadius = MIN_RADIUS + (maxRadius - MIN_RADIUS) * (time / maxDuration);
             //System.out.println("Radius is " + newRadius);
-            sphere.updateGeometry(24, 24, newRadius);
+            sphere.updateGeometry(32, 32, newRadius);
         } else {
             this.removeFromParent();
         }
@@ -56,6 +56,10 @@ public class Explosion extends Node implements IUpdatable {
     
     public float getRadius() {
         return sphere.getRadius();
+    }
+    
+    public float getMaxRadius() {
+        return maxRadius;
     }
     
 }

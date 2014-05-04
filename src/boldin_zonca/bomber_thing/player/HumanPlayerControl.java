@@ -21,7 +21,7 @@ import com.jme3.bullet.control.BetterCharacterControl;
  */
 public class HumanPlayerControl extends AbstractPlayerControl implements AnalogListener, ActionListener
 {
-    private float speed = 25;
+    private float speed = 30;
     private boolean PICK_UP_PRESSED = false;
 
     public HumanPlayerControl(Game theGame, KeyTrigger[] mappings)
