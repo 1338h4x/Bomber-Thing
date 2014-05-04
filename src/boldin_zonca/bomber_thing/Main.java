@@ -30,6 +30,8 @@ public class Main extends SimpleApplication
     {
         Game game = new Game();
         stateManager.attach(game);
+        setDisplayFps(false);
+        setDisplayStatView(false);
     }
 
     private static void initAppScreen(SimpleApplication app)

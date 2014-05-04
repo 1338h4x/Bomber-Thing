@@ -87,10 +87,10 @@ public class Game extends AbstractAppState
         initLevel();
         initLights();
         initCam();
-        initPlayers(2, 0);
+        initPlayers(4, 0);
 
-        showDebugInfo(Main.DEBUG);
-        bullet.setDebugEnabled(Main.DEBUG);
+        //showDebugInfo(Main.DEBUG);
+        //bullet.setDebugEnabled(Main.DEBUG);
         
         BitmapFont myFont = app.getAssetManager().loadFont("Interface/Fonts/Arial.fnt");
         timerText = new BitmapText(myFont, false);
@@ -256,8 +256,8 @@ public class Game extends AbstractAppState
                 new KeyTrigger(KeyInput.KEY_S),
                 new KeyTrigger(KeyInput.KEY_A),
                 new KeyTrigger(KeyInput.KEY_D),
-                new KeyTrigger(KeyInput.KEY_E),
-                new KeyTrigger(KeyInput.KEY_Q)
+                new KeyTrigger(KeyInput.KEY_Q),
+                new KeyTrigger(KeyInput.KEY_E)
             },
             {
                 new KeyTrigger(KeyInput.KEY_I),
@@ -266,6 +266,22 @@ public class Game extends AbstractAppState
                 new KeyTrigger(KeyInput.KEY_L),
                 new KeyTrigger(KeyInput.KEY_U),
                 new KeyTrigger(KeyInput.KEY_O)
+            },
+            {
+                new KeyTrigger(KeyInput.KEY_UP),
+                new KeyTrigger(KeyInput.KEY_DOWN),
+                new KeyTrigger(KeyInput.KEY_LEFT),
+                new KeyTrigger(KeyInput.KEY_RIGHT),
+                new KeyTrigger(KeyInput.KEY_RSHIFT),
+                new KeyTrigger(KeyInput.KEY_RCONTROL)
+            },
+            {
+                new KeyTrigger(KeyInput.KEY_NUMPAD8),
+                new KeyTrigger(KeyInput.KEY_NUMPAD5),
+                new KeyTrigger(KeyInput.KEY_NUMPAD4),
+                new KeyTrigger(KeyInput.KEY_NUMPAD6),
+                new KeyTrigger(KeyInput.KEY_NUMPAD7),
+                new KeyTrigger(KeyInput.KEY_NUMPAD9)
             }
         };
 
@@ -407,7 +423,7 @@ public class Game extends AbstractAppState
                 Explosion explosion = (Explosion)s;
                 for (Player p: players) {
                     float distance = explosion.getLocalTranslation().distance(p.getLocalTranslation());
-                    if (distance <= explosion.getRadius() + 5f && !gameOver) { //5f for approximate size of player
+                    if (distance <= explosion.getRadius() + 3f && !gameOver) { //3f for approximate size of player
                         //System.out.println(p.getName() + " is hit!");
                         p.takeDamage();
                     } 

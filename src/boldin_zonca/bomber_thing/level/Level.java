@@ -21,9 +21,9 @@ public class Level extends GameObject
     {
         return new Vector3f[]{
             new Vector3f(-60, 0, -60),
-            new Vector3f(60, 0, 60),
             new Vector3f(60, 0, -60),
             new Vector3f(-60, 0, 60),
+            new Vector3f(60, 0, 60),
         };
     }
 }
