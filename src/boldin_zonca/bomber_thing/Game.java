@@ -390,9 +390,9 @@ public class Game extends AbstractAppState
                     float zPos = rand.nextFloat() * 120 - 60;
                     //System.out.println("Spawning bomb at " + xPos + ", " + yPos);
                     //Each one is slightly bigger than the last!
-                    TimeBomb bomb = new TimeBomb(app.getAssetManager(), 15f + 1.25f * suddenDeathBombCount);
+                    TimeBomb bomb = new TimeBomb(app.getAssetManager(), 15f + 1.25f * suddenDeathBombCount, 5);
                     //They fall from the sky!
-                    bomb.setLocalTranslation(xPos, 30, zPos);
+                    bomb.setLocalTranslation(xPos, 75, zPos);
                     app.getRootNode().attachChild(bomb);
                     bomb.addPhysics(bullet.getPhysicsSpace());
                     

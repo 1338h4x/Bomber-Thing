@@ -29,11 +29,11 @@ public class TimeBomb extends AbstractBomb implements IUpdatable
         explosionRadius = owner.getBombRadius();
     }
     
-    public TimeBomb(AssetManager assetManager, float radius)
+    public TimeBomb(AssetManager assetManager, float radius, float time)
     {
         super(assetManager, "/Models/TimeBomb/TimeBomb.mesh.j3o", null);
         currFuseTime = 0;
-        maxFuseTime = DEFAULT_FUSE_TIME;
+        maxFuseTime = time;
         explosionRadius = radius;
     }
     
