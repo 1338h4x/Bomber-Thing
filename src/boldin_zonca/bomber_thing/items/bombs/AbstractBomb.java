@@ -17,12 +17,14 @@ public abstract class AbstractBomb extends GameObject implements IExplosive, IDe
 {
     protected Player owner;
     protected AssetManager assetManager;
+    private boolean isSolid;
 
     public AbstractBomb(AssetManager assetManager, String filename, Player owner)
     {
         super(assetManager, filename);
         this.owner = owner;
         this.assetManager = assetManager;
+        isSolid = false;
     }
     
     public abstract void detonate();
@@ -30,5 +32,13 @@ public abstract class AbstractBomb extends GameObject implements IExplosive, IDe
     public void onHit()
     {
         detonate();
+    }
+    
+    public void setSolid(boolean solid) {
+        isSolid = true;
+    }
+    
+    public boolean isSolid() {
+        return isSolid;
     }
 }

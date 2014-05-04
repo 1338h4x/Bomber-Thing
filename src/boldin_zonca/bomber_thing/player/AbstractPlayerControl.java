@@ -39,6 +39,7 @@ public abstract class AbstractPlayerControl extends AbstractControl implements I
             {
                 Node bombNode = game.getBombFactory().getBomb(BombType.TIME, (Player) spatial);
                 bombNode.setLocalTranslation(spatial.getLocalTranslation());
+                //System.out.println(bombNode.getLocalTranslation());
                 game.getApplication().getRootNode().attachChild(bombNode);
 
                 //RigidBodyControl physBomb = new RigidBodyControl(100);

@@ -25,6 +25,7 @@ public class Player extends GameObject implements IUpdatable
 {
     private final int INITIAL_MAX_BOMBS = 2;
     private final int MAX_MAX_BOMBS = 10;
+    private final float INITIAL_RADIUS = 25f;
     private final float MAX_RADIUS = 100f;
     private final int START_LIVES = 5;
     private final float TIME_TO_RESPAWN = 3f;
@@ -70,7 +71,7 @@ public class Player extends GameObject implements IUpdatable
         canPickUp = false;
         maxBombs = INITIAL_MAX_BOMBS;
         bombCount = 0;
-        bombRadius = 25f;    
+        bombRadius = INITIAL_RADIUS;    
         bombType = BombType.TIME;
         currEffect = null;
         curState = State.ALIVE;

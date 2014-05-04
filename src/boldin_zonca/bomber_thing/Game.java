@@ -29,8 +29,10 @@ import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import java.util.ArrayList;
 import boldin_zonca.bomber_thing.items.ItemFactory;
+import boldin_zonca.bomber_thing.items.bombs.AbstractBomb;
 import boldin_zonca.bomber_thing.items.bombs.BombFactory;
 import boldin_zonca.bomber_thing.items.bombs.Explosion;
+import boldin_zonca.bomber_thing.items.bombs.TimeBomb;
 
 import com.jme3.bullet.control.BetterCharacterControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
@@ -38,6 +40,7 @@ import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
 import com.jme3.scene.Spatial;
+import java.util.Random;
 
 /**
  *
@@ -45,7 +48,7 @@ import com.jme3.scene.Spatial;
  */
 public class Game extends AbstractAppState
 {
-    private final int TIME_LIMIT = 60*3;
+    private final float TIME_LIMIT = 3*60;
 
     private Main app;
     private AppStateManager stateManager;
@@ -56,6 +59,9 @@ public class Game extends AbstractAppState
     private Level level;
     private float time;
     private BitmapText timerText;
+    private boolean suddenDeath;
+    private int suddenDeathBombCount;
+    private float suddenDeathNextBombAt;
 
     private Material[] playerMats;
     private ArrayList<Player> players;
@@ -71,6 +77,9 @@ public class Game extends AbstractAppState
         bombFactory = new BombFactory(app.getAssetManager());
         itemFactory = new ItemFactory(app.getAssetManager());
         time = 0;
+        suddenDeath = false;
+        suddenDeathBombCount = 0;
+        suddenDeathNextBombAt = TIME_LIMIT;
 
         initMaterials();
         initLevel();
@@ -86,7 +95,7 @@ public class Game extends AbstractAppState
         timerText.setColor(ColorRGBA.White);
         //timerText.setSize(timerText.getFont().getCharSet().getRenderedSize() * 5);
         int mins = (int)(TIME_LIMIT / 60);
-        int seconds = TIME_LIMIT % 60;
+        int seconds = (int)(TIME_LIMIT % 60);
         String s;
         if (seconds < 10) {
             s = mins+":0"+seconds;
@@ -343,7 +352,40 @@ public class Game extends AbstractAppState
             }
             timerText.setText(timeStr);
         } else {
-            //Will add sudden death
+            if (!suddenDeath) {
+                suddenDeath = true;
+                timerText.setText("Sudden death!");
+                timerText.setLocalTranslation((1024 - timerText.getLineWidth())/2, 768 - 20, 0);
+                //Everyone gets +2 max bombs and +50% bomb radius!
+                for (Player p: players) {
+                    p.setMaxBombs(p.getMaxBombs() + 2);
+                    p.setBombRadius(p.getBombRadius() + 12.5f);
+                }
+            }
+            while (time > suddenDeathNextBombAt) {
+                //Spawn a time bomb at a random spot
+                Random rand = new Random();
+                float xPos = rand.nextFloat() * 120 - 60;
+                float zPos = rand.nextFloat() * 120 - 60;
+                //System.out.println("Spawning bomb at " + xPos + ", " + yPos);
+                //Each one is slightly bigger than the last!
+                TimeBomb bomb = new TimeBomb(app.getAssetManager(), 20f + 2.5f * suddenDeathBombCount);
+                
+                //Note: If we get physics working, move the y coord up so they drop from the sky instead!
+                bomb.setLocalTranslation(xPos, 0, zPos);
+                
+                //Trying to give bombs physics just crashes. :(
+                //CollisionShape collBomb = CollisionShapeFactory.createMeshShape(bomb);
+                //RigidBodyControl physBomb = new RigidBodyControl(collBomb, 2);
+                //bomb.addControl(physBomb);
+                app.getRootNode().attachChild(bomb);
+                //bullet.getPhysicsSpace().add(physBomb);
+                //bomb.setSolid(true);
+                
+                //And they spawn faster and faster over time!
+                suddenDeathNextBombAt += 50f / (5 + suddenDeathBombCount);
+                suddenDeathBombCount++;
+            }
         }
         
         //update updatables
@@ -353,7 +395,7 @@ public class Game extends AbstractAppState
             }
         }
         
-        //check explosion collisions
+        //check explosion and non-solid bomb collisions
         //they're spheres, and I don't want them to have physics, so this is ultimately easier than setting up collision shapes.
         //doesn't take into account player mesh shape however, but that's no biggie consider it an approximation
         for (Spatial s: app.getRootNode().getChildren()) {
@@ -364,9 +406,32 @@ public class Game extends AbstractAppState
                     if (distance <= explosion.getRadius() + 5f) { //5f for approximate size of player
                         //System.out.println(p.getName() + " is hit!");
                         p.takeDamage();
-                    }
-                    
+                    } 
                 }
+            //Bombs are not solid when first placed, so that they don't push the player immediately
+            //Check to see if nobody's standing on it, then make it solid
+            } else if (s instanceof AbstractBomb) {
+                //No idea what's going on, but they just fall through and then throw a NullPointerException
+                
+                /*AbstractBomb bomb = (AbstractBomb) s;
+                if (!bomb.isSolid()) {
+                    boolean collisionFound = false;
+                    for (Player p: players) {
+                        float distance = bomb.getLocalTranslation().distance(p.getLocalTranslation());
+                        if (distance <= 10f) { //Approximation
+                            collisionFound = true;
+                        } 
+                    }
+                    if (!collisionFound) {
+                        System.out.println("Adding physics to bomb now");
+                        CollisionShape collBomb = CollisionShapeFactory.createMeshShape(bomb);
+                        RigidBodyControl physBomb = new RigidBodyControl(collBomb, 2);
+                        bomb.addControl(physBomb);
+                        app.getRootNode().attachChild(bomb);
+                        bullet.getPhysicsSpace().add(physBomb);
+                        bomb.setSolid(true);
+                    }
+                }*/
             }
         }
     }
