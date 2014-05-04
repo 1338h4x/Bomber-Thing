@@ -35,6 +35,7 @@ import boldin_zonca.bomber_thing.items.bombs.Explosion;
 import com.jme3.bullet.control.BetterCharacterControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
+import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
 import com.jme3.scene.Spatial;
 
@@ -44,6 +45,7 @@ import com.jme3.scene.Spatial;
  */
 public class Game extends AbstractAppState
 {
+    private final int TIME_LIMIT = 60*3;
 
     private Main app;
     private AppStateManager stateManager;
@@ -52,6 +54,8 @@ public class Game extends AbstractAppState
     private BombFactory bombFactory;
     private ItemFactory itemFactory;
     private Level level;
+    private float time;
+    private BitmapText timerText;
 
     private Material[] playerMats;
     private ArrayList<Player> players;
@@ -66,6 +70,7 @@ public class Game extends AbstractAppState
         inputManager = anApp.getInputManager();
         bombFactory = new BombFactory(app.getAssetManager());
         itemFactory = new ItemFactory(app.getAssetManager());
+        time = 0;
 
         initMaterials();
         initLevel();
@@ -75,6 +80,24 @@ public class Game extends AbstractAppState
 
         showDebugInfo(Main.DEBUG);
         bullet.setDebugEnabled(Main.DEBUG);
+        
+        BitmapFont myFont = app.getAssetManager().loadFont("Interface/Fonts/Arial.fnt");
+        timerText = new BitmapText(myFont, false);
+        timerText.setColor(ColorRGBA.White);
+        //timerText.setSize(timerText.getFont().getCharSet().getRenderedSize() * 5);
+        int mins = (int)(TIME_LIMIT / 60);
+        int seconds = TIME_LIMIT % 60;
+        String s;
+        if (seconds < 10) {
+            s = mins+":0"+seconds;
+        } else {
+            s = mins+":"+seconds;
+        }
+        timerText.setText(s);
+        //can't figure out how to get AppSettings, hardcoding resolution for now
+        timerText.setLocalTranslation((1024 - timerText.getLineWidth())/2, 768 - 20, 0);
+        
+        app.getGuiNode().attachChild(timerText);
     }
 
     private void initLevel()
@@ -261,26 +284,25 @@ public class Game extends AbstractAppState
             tempPlayer.addControl(playerControl);
             
             BitmapText hudText = tempPlayer.getHudText();
-            hudText.setSize(hudText.getFont().getCharSet().getRenderedSize() * 5);
+            //hudText.setSize(hudText.getFont().getCharSet().getRenderedSize() * 5);
             if (i == 0) {
                 hudText.setColor(ColorRGBA.Red);
-                //can't figure out how to get AppSettings, so for the time being just gonna hardcode resolution
-                hudText.setLocalTranslation(25, 768 - 25, 0);
+                hudText.setLocalTranslation(25, 768 - 20, 0);
             } else if (i == 1) {
                 hudText.setColor(ColorRGBA.Blue);
-                hudText.setLocalTranslation(1024 - 25 - hudText.getLineWidth(), 768 - 25, 0);
+                hudText.setLocalTranslation(1024 - 25 - hudText.getLineWidth(), 768 - 20, 0);
             } else if (i == 2) {
                 hudText.setColor(ColorRGBA.Green);
-                hudText.setLocalTranslation(25, 25 + hudText.getLineHeight(), 0);
+                hudText.setLocalTranslation(25, 20 + hudText.getLineHeight(), 0);
             } else if (i == 3) {
                 hudText.setColor(ColorRGBA.Yellow);
-                hudText.setLocalTranslation(1024 - 25 - hudText.getLineWidth(), 25 + hudText.getLineHeight(), 0);
+                hudText.setLocalTranslation(1024 - 25 - hudText.getLineWidth(), 20 + hudText.getLineHeight(), 0);
             }
             app.getGuiNode().attachChild(hudText);
             
-            System.out.println(hudText.getText());
-            System.out.println(hudText.getColor());
-            System.out.println(hudText.getLocalTranslation());
+            //System.out.println(hudText.getText());
+            //System.out.println(hudText.getColor());
+            //System.out.println(hudText.getLocalTranslation());
             
             players.add(tempPlayer);
         }
@@ -308,7 +330,23 @@ public class Game extends AbstractAppState
 
     @Override
     public void update(float tpf) {
-        //update ubdatables
+        time += tpf;
+        int timeLeft = (int)(TIME_LIMIT - time);
+        if (timeLeft > 0) {
+            int mins = (int)(timeLeft / 60);
+            int seconds = timeLeft % 60;
+            String timeStr;
+            if (seconds < 10) {
+                timeStr = mins+":0"+seconds;
+            } else {
+                timeStr = mins+":"+seconds;
+            }
+            timerText.setText(timeStr);
+        } else {
+            //Will add sudden death
+        }
+        
+        //update updatables
         for (Spatial s: app.getRootNode().getChildren()) {
             if (s instanceof IUpdatable) {
                 ((IUpdatable)s).update(tpf);
@@ -323,7 +361,7 @@ public class Game extends AbstractAppState
                 Explosion explosion = (Explosion)s;
                 for (Player p: players) {
                     float distance = explosion.getLocalTranslation().distance(p.getLocalTranslation());
-                    if (distance <= explosion.getRadius()) {
+                    if (distance <= explosion.getRadius() + 5f) { //5f for approximate size of player
                         //System.out.println(p.getName() + " is hit!");
                         p.takeDamage();
                     }

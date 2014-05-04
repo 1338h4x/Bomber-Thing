@@ -23,7 +23,8 @@ import com.jme3.font.BitmapText;
  */
 public class Player extends GameObject implements IUpdatable
 {
-    private final int MAX_BOMBS = 10;
+    private final int INITIAL_MAX_BOMBS = 2;
+    private final int MAX_MAX_BOMBS = 10;
     private final float MAX_RADIUS = 100f;
     private final int START_LIVES = 5;
     private final float TIME_TO_RESPAWN = 3f;
@@ -55,7 +56,7 @@ public class Player extends GameObject implements IUpdatable
         startPos = pos;
         this.setLocalTranslation(startPos);
         lives = START_LIVES;
-        BitmapFont myFont = assetManager.loadFont("Interface/Fonts/Console.fnt");
+        BitmapFont myFont = assetManager.loadFont("Interface/Fonts/Arial.fnt");
         hudText = new BitmapText(myFont, false);
         hudText.setText(name + ": " + lives);
         
@@ -67,7 +68,7 @@ public class Player extends GameObject implements IUpdatable
         hasExtraHit = false;
         canKick = false;
         canPickUp = false;
-        maxBombs = 1;
+        maxBombs = INITIAL_MAX_BOMBS;
         bombCount = 0;
         bombRadius = 25f;    
         bombType = BombType.TIME;
@@ -113,8 +114,8 @@ public class Player extends GameObject implements IUpdatable
 
     public void setMaxBombs(int maxBombs)
     {
-        if (maxBombs > MAX_BOMBS)
-            this.maxBombs = MAX_BOMBS;
+        if (maxBombs > MAX_MAX_BOMBS)
+            this.maxBombs = MAX_MAX_BOMBS;
         else
             this.maxBombs = maxBombs;
     }
