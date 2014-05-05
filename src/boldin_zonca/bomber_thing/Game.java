@@ -150,17 +150,17 @@ public class Game extends AbstractAppState
         playerMats[1] = new Material(app.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
         playerMats[1].setBoolean("UseMaterialColors", true);
         playerMats[1].setColor("Ambient", new ColorRGBA(0.3f, 0.3f, 0.3f, 1.0f));
-        playerMats[1].setColor("Diffuse", ColorRGBA.Yellow);
+        playerMats[1].setColor("Diffuse", ColorRGBA.Blue);
 
         playerMats[2] = new Material(app.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
         playerMats[2].setBoolean("UseMaterialColors", true);
         playerMats[2].setColor("Ambient", new ColorRGBA(0.3f, 0.3f, 0.3f, 1.0f));
-        playerMats[2].setColor("Diffuse", ColorRGBA.Blue);
+        playerMats[2].setColor("Diffuse", ColorRGBA.Green);
 
         playerMats[3] = new Material(app.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
         playerMats[3].setBoolean("UseMaterialColors", true);
         playerMats[3].setColor("Ambient", new ColorRGBA(0.3f, 0.3f, 0.3f, 1.0f));
-        playerMats[3].setColor("Diffuse", ColorRGBA.Orange);
+        playerMats[3].setColor("Diffuse", ColorRGBA.Yellow);
     }
 
     private void initLights()
@@ -390,7 +390,7 @@ public class Game extends AbstractAppState
                     float zPos = rand.nextFloat() * 120 - 60;
                     //System.out.println("Spawning bomb at " + xPos + ", " + yPos);
                     //Each one is slightly bigger than the last!
-                    TimeBomb bomb = new TimeBomb(app.getAssetManager(), 15f + 1.25f * suddenDeathBombCount, 5);
+                    TimeBomb bomb = new TimeBomb(app.getAssetManager(), 12.5f + 0.625f * suddenDeathBombCount, 5);
                     //They fall from the sky!
                     bomb.setLocalTranslation(xPos, 75, zPos);
                     app.getRootNode().attachChild(bomb);
@@ -398,7 +398,7 @@ public class Game extends AbstractAppState
                     
 
                     //And they spawn faster and faster over time!
-                    suddenDeathNextBombAt += 62.5f / (25 + suddenDeathBombCount);
+                    suddenDeathNextBombAt += 25f / (5 + suddenDeathBombCount);
                     suddenDeathBombCount++;
                 }
             }

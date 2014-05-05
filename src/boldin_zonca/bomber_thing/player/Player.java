@@ -49,7 +49,7 @@ public class Player extends GameObject implements IUpdatable
     
     public Player(AssetManager assetManager, String aName, Material mat, Vector3f pos, Vector3f dir)
     {
-        super(assetManager, "Models/Player/Player.mesh.j3o");
+        super(assetManager, "Models/Player/Player.mesh.j3o", mat);
         name = aName;
 //        Geometry geom = (Geometry) this.getChild("model");
 //        geom.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
