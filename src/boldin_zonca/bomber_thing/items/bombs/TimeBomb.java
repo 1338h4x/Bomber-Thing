@@ -8,6 +8,7 @@ import boldin_zonca.bomber_thing.IUpdatable;
 import com.jme3.scene.Node;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.material.Material;
 import com.jme3.math.Vector3f;
 
 /**
@@ -20,6 +21,8 @@ public class TimeBomb extends AbstractBomb implements IUpdatable
     protected float maxFuseTime;
     protected float currFuseTime;
     protected float explosionRadius;
+    private static Material redTexture;
+    private boolean isRed;
     
     public TimeBomb(AssetManager assetManager, Player player)
     {
@@ -27,6 +30,7 @@ public class TimeBomb extends AbstractBomb implements IUpdatable
         currFuseTime = 0;
         maxFuseTime = DEFAULT_FUSE_TIME;
         explosionRadius = owner.getBombRadius();
+        isRed = false;
     }
     
     public TimeBomb(AssetManager assetManager, float radius, float time)
@@ -35,6 +39,7 @@ public class TimeBomb extends AbstractBomb implements IUpdatable
         currFuseTime = 0;
         maxFuseTime = time;
         explosionRadius = radius;
+        isRed = false;
     }
     
     public void detonate()
@@ -63,7 +68,13 @@ public class TimeBomb extends AbstractBomb implements IUpdatable
         currFuseTime += tpf;
         if (currFuseTime >= maxFuseTime) {
             detonate();
+        } else if (!isRed && currFuseTime >= maxFuseTime - 1f) {
+            model.setMaterial(redTexture);
         }
+    }
+    
+    public static void setRedTexture(Material mat) {
+        redTexture = mat;
     }
     
 }

@@ -146,6 +146,7 @@ public class Game extends AbstractAppState
         playerMats[0].setBoolean("UseMaterialColors", true);
         playerMats[0].setColor("Ambient", new ColorRGBA(0.3f, 0.3f, 0.3f, 1.0f));
         playerMats[0].setColor("Diffuse", ColorRGBA.Red);
+        TimeBomb.setRedTexture(playerMats[0]);
 
         playerMats[1] = new Material(app.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
         playerMats[1].setBoolean("UseMaterialColors", true);

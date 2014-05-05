@@ -10,14 +10,17 @@ import com.jme3.scene.Spatial;
  */
 public abstract class GameObject extends Node
 {
+    protected Spatial model;
+    
     public GameObject(AssetManager assetManager, String filename)
     {
-        this.attachChild(assetManager.loadModel(filename));
+        model = assetManager.loadModel(filename);
+        this.attachChild(model);
         this.name = "model";
     }
     
     public GameObject(AssetManager assetManager, String filename, Material mat) {
-        Spatial model = assetManager.loadModel(filename);
+        model = assetManager.loadModel(filename);
         model.setMaterial(mat);
         this.attachChild(model);
         this.name = "model";
