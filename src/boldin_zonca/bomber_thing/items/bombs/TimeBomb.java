@@ -54,7 +54,11 @@ public class TimeBomb extends AbstractBomb implements IUpdatable
         }
         RigidBodyControl control = this.getControl(RigidBodyControl.class);
         if (control != null) {
+            control.setEnabled(false);
+            control.getPhysicsSpace().remove(control);
+            this.removeControl(control);
             control.destroy();
+            //is this thorough enough? pls no lag pls
         }
         this.removeFromParent();
     }
